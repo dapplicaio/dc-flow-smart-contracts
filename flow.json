@@ -1,0 +1,83 @@
+{
+	"emulators": {
+		"default": {
+			"port": 3569,
+			"serviceAccount": "emulator-account"
+		}
+	},
+	"contracts": {
+		"DarkCountry": {
+		  "source": "./cadence/contracts/DarkCountry.cdc",
+		  "aliases": {
+			"testnet": "0x93be2a959a25052e",
+			"emulator": "0xf8d6e0586b0a20c7"
+		  }
+		},
+		"DarkCountryMarket": {
+		  "source": "./cadence/contracts/DarkCountryMarket.cdc",
+		  "aliases": {
+			"testnet": "0x93be2a959a25052e",
+			"emulator": "0xf8d6e0586b0a20c7"
+		  }
+		},
+		"NonFungibleToken": {
+		  "source": "./cadence/contracts/NonFungibleToken.cdc",
+		  "aliases": {
+			"testnet": "0x631e88ae7f1d7c20",
+			"emulator": "0xf8d6e0586b0a20c7"
+		  }
+		},
+		"FungibleToken": {
+		  "source": "./cadence/contracts/FungibleToken.cdc",
+		  "aliases": {
+			"testnet": "0x9a0766d93b6608b7",
+			"emulator": "0xee82856bf20e2aa6"
+		  }
+		},
+		"FlowToken": {
+		  "source": "./cadence/contracts/FlowToken.cdc",
+		  "aliases": {
+			"testnet": "0x7e60df042a9c0868",
+			"emulator": "0x0ae53cb6e3f42a79"
+		  }
+		}
+	},
+	"networks": {
+		"emulator": {
+			"host": "127.0.0.1:3569",
+			"chain": "flow-emulator"
+		},
+		"testnet": {
+			"host": "access.testnet.nodes.onflow.org:9000",
+			"chain": "flow-testnet"
+		}
+	},
+	"accounts": {
+		"service": {
+			"address": "f8d6e0586b0a20c7",
+			"privateKey": "0366f7a008b9255e8ab747d3cc783e4cbe962693b039f1df5eaf7039f61b1990",
+			"sigAlgorithm": "ECDSA_P256",
+			"hashAlgorithm": "SHA3_256",
+			"keyType": "hex",
+			"keyIndex": 0,
+			"keyContext": {
+			  "privateKey": "0366f7a008b9255e8ab747d3cc783e4cbe962693b039f1df5eaf7039f61b1990"
+			}
+		},
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"keys": "39a886eed529c2ed7df355e1a6dbf6e889e0169a76b6feb6c1bcccc11b259a0c",
+			"chain": "flow-emulator"
+		},
+		"testnet-account": {
+			"address": "0x93be2a959a25052e",
+			"keys": "",
+			"chain": "flow-testnet"
+		  }
+	},
+	"deployments": {
+		"testnet": {
+		  "testnet-account": ["DarkCountry", "DarkCountryMarket"]
+		}
+	}
+}
