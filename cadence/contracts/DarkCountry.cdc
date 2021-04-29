@@ -6,26 +6,26 @@
     This smart contract contains the core functionality for
     DarkCountry NFTs.
 
-    The contract manages the data associated with all the AssetType structures
+    The contract manages the data associated with all the ItemTemplate structures
     that are used as templates for the DarkCountry NFTs
 
     When a new NFTs wants to be added to the records and the type of the
     NFT is not registered, a Minter creates
-    a new AssetType struct that is stored in the smart contract.
+    a new ItemTemplate struct that is stored in the smart contract.
 
-    E.g. Minter creates Asset Type for Rare Land Pack, sets data associated with it.
+    E.g. Minter creates Item Template for Rare Land Pack, sets data associated with it.
     Then they can mint new multiple NFTs of Common Rare Pack type by specifying
-    the appropriate asset type ID.
+    the appropriate item template ID.
 
-    Asset Type is a public struct that
-    contains public information about the asset type.
+    Item Template is a public struct that
+    contains public information about the item template.
     The private NFTMinter resource is used to mint new NFTs.
 
     The NFT minter resource has the power to do configuration actions
-    in the smart contract. When Minter wants to call functions in an AssetType,
+    in the smart contract. When Minter wants to call functions in an ItemTemplate,
     they call their borrowSet function to get a reference
-    to an AssetType structure in the contract.
-    Then, they can call functions on the AssetType using that reference.
+    to an ItemTemplate structure in the contract.
+    Then, they can call functions on the ItemTemplate using that reference.
 
     The contract also defines a Collection resource. This is an object that
     every DarkCountry NFT owner will store in their account
@@ -65,8 +65,8 @@ pub contract DarkCountry: NonFungibleToken {
     // Emitted when a NFT is minted
     pub event Minted(id: UInt64, typeID: UInt64, serialNumber: UInt64)
 
-    // Emitted when a new AssetType struct is created
-    pub event AssetTypeCreated(id: UInt64, metadata: {String: String})
+    // Emitted when a new ItemTemplate struct is created
+    pub event ItemTemplateCreated(id: UInt64, metadata: {String: String})
 
     // Named Paths
     //
@@ -78,33 +78,33 @@ pub contract DarkCountry: NonFungibleToken {
     //
     pub var totalSupply: UInt64
 
-    // The ID that is used to create AssetType structs.
-    // Every time an AssetType is created, nextAssetTypeID is assigned
-    // to the new AssetType's ID and then is incremented by 1
-    pub var nextAssetTypeID: UInt64
+    // The ID that is used to create ItemTemplate structs.
+    // Every time an ItemTemplate is created, nextItemTemplateID is assigned
+    // to the new ItemTemplate's ID and then is incremented by 1
+    pub var nextItemTemplateID: UInt64
 
-    // Variable size dictionary of number of minted assets per
-    // a certain asset type
+    // Variable size dictionary of number of minted items per
+    // a certain item template
     //
     // In other words it can be considered as totalSupply of
     // NFTs of a certain type
-    pub var numberMintedPerAssetType: {UInt64: UInt64}
+    pub var numberMintedPerItemTemplate: {UInt64: UInt64}
 
-    // Variable size dictionary of AssetType structs
-    access(self) var assetTypes: {UInt64: AssetType}
+    // Variable size dictionary of ItemTemplate structs
+    access(self) var itemTemplates: {UInt64: ItemTemplate}
 
-    // AssetType is a Struct that holds metadata associated
+    // ItemTemplate is a Struct that holds metadata associated
     // with a specific NFT type, like Common Land Packs all share
     // the same data associated with them, e.g. name, series, description, rarity.
     //
-    // DarkCountry NFTs will all reference a single AssetType as the holder of
-    // its metadata. The AssetType structs are publicly accessible, so anyone can
+    // DarkCountry NFTs will all reference a single ItemTemplate as the holder of
+    // its metadata. The ItemTemplate structs are publicly accessible, so anyone can
     // read the metadata associated with a specific NFT's TypeID
     //
-    pub struct AssetType {
+    pub struct ItemTemplate {
 
-        // The unique ID for the AssetType
-        pub let assetTypeID: UInt64
+        // The unique ID for the ItemTemplate
+        pub let itemTemplateID: UInt64
 
         // Stores all the metadata about a specific NFT type, e.g. "name": "Common Land Pack"
         // as a string mappings
@@ -113,76 +113,76 @@ pub contract DarkCountry: NonFungibleToken {
 
         init(metadata: {String: String}) {
             pre {
-                metadata.length != 0: "New AssetType metadata cannot be empty"
+                metadata.length != 0: "New ItemTemplate metadata cannot be empty"
             }
-            self.assetTypeID = DarkCountry.nextAssetTypeID
+            self.itemTemplateID = DarkCountry.nextItemTemplateID
             self.metadata = metadata
 
-            // Increment the asset type ID so that it isn't used again
-            DarkCountry.nextAssetTypeID = DarkCountry.nextAssetTypeID + (1 as UInt64)
+            // Increment the item template ID so that it isn't used again
+            DarkCountry.nextItemTemplateID = DarkCountry.nextItemTemplateID + (1 as UInt64)
 
-            // Explicitly set the counter of minted assets for newly created asset type to 0
-            DarkCountry.numberMintedPerAssetType[self.assetTypeID] = (0 as UInt64)
+            // Explicitly set the counter of minted items for newly created item template to 0
+            DarkCountry.numberMintedPerItemTemplate[self.itemTemplateID] = (0 as UInt64)
 
-            emit AssetTypeCreated(id: self.assetTypeID, metadata: metadata)
+            emit ItemTemplateCreated(id: self.itemTemplateID, metadata: metadata)
         }
     }
 
 
-    // getAllAssetTypes returns all the created asset types
+    // getAllItemTemplates returns all the created item templates
     //
-    // Returns: An array of all the asset types that have been created
+    // Returns: An array of all the item templates that have been created
     //
-    pub fun getAllAssetTypes(): [DarkCountry.AssetType] {
-        return DarkCountry.assetTypes.values
+    pub fun getAllItemTemplates(): [DarkCountry.ItemTemplate] {
+        return DarkCountry.itemTemplates.values
     }
 
-    // getAssetTypeMetaData returns all the metadata associated with a specific AssetType
+    // getItemTemplateMetaData returns all the metadata associated with a specific ItemTemplate
     //
-    // Parameters: assetTypeID: The id of the AssetType that is being searched
+    // Parameters: itemTemplateID: The id of the ItemTemplate that is being searched
     //
     // Returns: The metadata as a String to String mapping optional
     //
-    pub fun getAssetTypeMetaData(assetTypeID: UInt64): {String: String}? {
-        return self.assetTypes[assetTypeID]?.metadata
+    pub fun getItemTemplateMetaData(itemTemplateID: UInt64): {String: String}? {
+        return self.itemTemplates[itemTemplateID]?.metadata
     }
 
-    // getAssetTypeMetaDataByField returns the metadata associated with a
+    // getItemTemplateMetaDataByField returns the metadata associated with a
     // specific field of the metadata
     // Ex: field: "Rarity" will return something like "Super Rare"
     //
-    // Parameters: assetTypeID: The id of the AssetType that is being searched
+    // Parameters: itemTemplateID: The id of the ItemTemplate that is being searched
     //             field: The field to search for
     //
     // Returns: The metadata field as a String Optional
-    pub fun getAssetTypeMetaDataByField(assetTypeID: UInt64, field: String): String? {
-        if let assetType = DarkCountry.assetTypes[assetTypeID] {
-            return assetType.metadata[field]
+    pub fun getItemTemplateMetaDataByField(itemTemplateID: UInt64, field: String): String? {
+        if let itemTemplate = DarkCountry.itemTemplates[itemTemplateID] {
+            return itemTemplate.metadata[field]
         } else {
             return nil
         }
     }
 
     // NFT
-    // A DarkCountry asset as a NFT
+    // A DarkCountry item as a NFT
     //
     pub resource NFT: NonFungibleToken.INFT {
         // The token's ID
         // Increments once once any new NFT is minted
         pub let id: UInt64
 
-        // The token's asset type, e.g. 1 for "Common Land Pack"
-        pub let assetTypeID: UInt64
+        // The token's item template, e.g. 1 for "Common Land Pack"
+        pub let itemTemplateID: UInt64
 
         // The token's serial number
-        // Specific for an AssetType
+        // Specific for an ItemTemplate
         pub let serialNumber: UInt64
 
         // initializer
         //
-        init(initID: UInt64, initAssetTypeID: UInt64, initSerialNumber: UInt64) {
+        init(initID: UInt64, initItemTemplateID: UInt64, initSerialNumber: UInt64) {
             self.id = initID
-            self.assetTypeID = initAssetTypeID
+            self.itemTemplateID = initItemTemplateID
             self.serialNumber = initSerialNumber
         }
     }
@@ -293,7 +293,7 @@ pub contract DarkCountry: NonFungibleToken {
     // NFT Minter
     // Resource that admin would own to be
     // able to:
-    //  1. Add new AssetTypes that would define a new NFT type and its metadata
+    //  1. Add new ItemTemplates that would define a new NFT type and its metadata
     //  2. Mint new NFTs
     //
 	pub resource NFTMinter {
@@ -302,42 +302,42 @@ pub contract DarkCountry: NonFungibleToken {
         // Mints a new NFT with a new ID
 		// and deposit it in the recipients collection using their collection reference
         //
-		pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, assetTypeID: UInt64) {
+		pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, itemTemplateID: UInt64) {
             // make sure the aseetTypeID is a valid one
             pre {
-                DarkCountry.assetTypes[assetTypeID] != nil: "Cannot mintNFT: assetType doesn't exist."
+                DarkCountry.itemTemplates[itemTemplateID] != nil: "Cannot mintNFT: itemTemplate doesn't exist."
             }
 
-            // Gets the number of NFTs of the asset type that have been minted
+            // Gets the number of NFTs of the item template that have been minted
             // to use as this NFT's serial number
-            let numOfAssetTypeNFTs = DarkCountry.numberMintedPerAssetType[assetTypeID]!
+            let numOfItemTemplateNFTs = DarkCountry.numberMintedPerItemTemplate[itemTemplateID]!
 
-            emit Minted(id: DarkCountry.totalSupply, typeID: assetTypeID, serialNumber: numOfAssetTypeNFTs)
+            emit Minted(id: DarkCountry.totalSupply, typeID: itemTemplateID, serialNumber: numOfItemTemplateNFTs)
 
 			// deposit it in the recipient's account using their reference
-			recipient.deposit(token: <-create DarkCountry.NFT(initID: DarkCountry.totalSupply, initAssetTypeID: assetTypeID, initSerialNumber: numOfAssetTypeNFTs))
+			recipient.deposit(token: <-create DarkCountry.NFT(initID: DarkCountry.totalSupply, initItemTemplateID: itemTemplateID, initSerialNumber: numOfItemTemplateNFTs))
 
             DarkCountry.totalSupply = DarkCountry.totalSupply + (1 as UInt64)
 
-            DarkCountry.numberMintedPerAssetType[assetTypeID] = numOfAssetTypeNFTs + (1 as UInt64)
+            DarkCountry.numberMintedPerItemTemplate[itemTemplateID] = numOfItemTemplateNFTs + (1 as UInt64)
 		}
 
 
-        // createAssetType creates a new AssetType struct
-        // and stores it in the assetTypes dictionary in the DarkCountry smart contract
+        // createItemTemplate creates a new ItemTemplate struct
+        // and stores it in the itemTemplates dictionary in the DarkCountry smart contract
         //
         // Parameters: metadata: A dictionary mapping metadata titles to their data
         //                       example: {"name": "Land Pack", "Rarity": "Super Rare"}
         //
-        // Returns: the ID of the new assetType object
+        // Returns: the ID of the new itemTemplate object
         //
-        pub fun createAssetType(metadata: {String: String}): UInt64 {
-            // Create the new AssetType
-            var newAssetType = AssetType(metadata: metadata)
-            let newID = newAssetType.assetTypeID
+        pub fun createItemTemplate(metadata: {String: String}): UInt64 {
+            // Create the new ItemTemplate
+            var newItemTemplate = ItemTemplate(metadata: metadata)
+            let newID = newItemTemplate.itemTemplateID
 
             // Store it in the contract storage
-            DarkCountry.assetTypes[newID] = newAssetType
+            DarkCountry.itemTemplates[newID] = newItemTemplate
 
             return newID
         }
@@ -369,16 +369,15 @@ pub contract DarkCountry: NonFungibleToken {
     //
 	init() {
         // Set our named paths
-        // FIXME: REMOVE SUFFIX BEFORE RELEASE
-        self.CollectionStoragePath = /storage/DarkCountryCollection003
-        self.CollectionPublicPath = /public/DarkCountryCollection003
-        self.MinterStoragePath = /storage/DarkCountryMinter003
+        self.CollectionStoragePath = /storage/DarkCountryCollection
+        self.CollectionPublicPath = /public/DarkCountryCollection
+        self.MinterStoragePath = /storage/DarkCountryMinter
 
         // Initialize the total supply
         self.totalSupply = 0
-        self.nextAssetTypeID = 1
-        self.numberMintedPerAssetType = {}
-        self.assetTypes = {}
+        self.nextItemTemplateID = 1
+        self.numberMintedPerItemTemplate = {}
+        self.itemTemplates = {}
 
         // Create a Minter resource and save it to storage
         let minter <- create NFTMinter()

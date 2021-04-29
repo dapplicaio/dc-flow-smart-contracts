@@ -1,16 +1,24 @@
-//import NonFungibleToken from "../../contracts/NonFungibleToken.cdc"
 //import DarkCountry from "../../contracts/DarkCountry.cdc"
 
 //emulator
-import NonFungibleToken from "0xNonFungibleToken"
 import DarkCountry from "0xDarkCountry"
 
-// This script returns the metadata for an NFT in an account's collection.
+// This script gets the ItemTemplate ID associated with an item
+// in a collection by getting a reference to the item
+// and then looking up its ItemTemplate ID
 
-pub fun main(address: Address, itemID: UInt64): {String: String} {
+// Parameters:
+//
+// account: The Flow Address of the account whose moment data needs to be read
+// itemID: The unique ID for the moment whose data needs to be read
+
+// Returns: UInt64
+// The ItemTemplate ID associated with an item with a specified item ID
+
+pub fun main(account: Address, itemID: UInt64): UInt64 {
 
     // get the public account object for the token owner
-    let owner = getAccount(address)
+    let owner = getAccount(account)
 
     let collectionBorrow = owner.getCapability(DarkCountry.CollectionPublicPath)!
         .borrow<&{DarkCountry.DarkCountryCollectionPublic}>()
@@ -20,5 +28,5 @@ pub fun main(address: Address, itemID: UInt64): {String: String} {
     let nft = collectionBorrow.borrowDarkCountryNFT(id: itemID)
         ?? panic("No such itemID in that collection")
 
-    return DarkCountry.getItemTemplateMetaData(itemTemplateID: nft.itemTemplateID)!
+    return nft.itemTemplateID
 }

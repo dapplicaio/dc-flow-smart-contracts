@@ -33,8 +33,8 @@
     - beneficiaryCapability: A FungibleToken.Receiver capability specifying a beneficiary,
         where a cut of the purchase gets sent.
     - cutPercentage: A cut percentage, specifying how much the beneficiary will recieve.
-    - preOrders: A dictionary of Adress to {AssetType : number of preordered items} mapping that indicates
-        how many items of a specific asset type are resevred for the Address
+    - preOrders: A dictionary of Adress to {ItemTemplate : number of preordered items} mapping that indicates
+        how many items of a specific Item Template are resevred for the Address
 
 
     Only Admins can create sale offers wich can be used in pre-sales only. Such offers can not be accepted by users
@@ -69,7 +69,7 @@ pub contract DarkCountryMarket {
     // A sale offer has been inserted into the collection of Address.
     pub event CollectionInsertedSaleOffer(
       itemID: UInt64,
-      assetTypeID: UInt64,
+      itemTemplateID: UInt64,
       owner: Address,
       price: UFix64
     )
@@ -101,7 +101,7 @@ pub contract DarkCountryMarket {
     pub var cutPercentage: UFix64
 
     // Pre Orders for a drop. Optional.
-    // Indicates how many NFTs of a certain asset type booked for a user.
+    // Indicates how many NFTs of a certain Item Template booked for a user.
     // The Admin resource manages the data.
     // Note: We do not make it as a resource that can be stored in user's storage
     // since the pre-order might be requested off chain
@@ -112,7 +112,7 @@ pub contract DarkCountryMarket {
     //
     pub resource interface SaleOfferPublicView {
         pub let itemID: UInt64
-        pub let assetTypeID: UInt64
+        pub let itemTemplateID: UInt64
         pub let price: UFix64
     }
 
@@ -126,14 +126,14 @@ pub contract DarkCountryMarket {
         // The DarkCountry NFT ID for sale.
         pub let itemID: UInt64
 
-        // The Asset Type of NFT
-        pub let assetTypeID: UInt64
+        // The Item Template of NFT
+        pub let itemTemplateID: UInt64
 
         // The sale payment price.
         pub let price: UFix64
 
         // Indicates if the Sale for pre-ordered items only
-        // That means only buyers that pre-ordered corresponding asset can accept the offer
+        // That means only buyers that pre-ordered corresponding item can accept the offer
         // Only account with the Admin resource can create such sales
         pub let isPreOrdersOnly: Bool
 
@@ -146,7 +146,7 @@ pub contract DarkCountryMarket {
         // Called by a purchaser to accept the sale offer.
         // If they send the correct payment in FlowToken, and if the item is still available,
         // the DarkCountry NFT will be placed in their DarkCountry.Collection
-        // If the sale offer is for pre ordered assets only,
+        // If the sale offer is for pre ordered items only,
         // the preOrders dictionary is checked for a corresponding record
         //
         pub fun accept(
@@ -158,19 +158,19 @@ pub contract DarkCountryMarket {
                 self.saleCompleted == false: "the sale offer has already been accepted"
             }
 
-            // Check if the sale is for pre-ordered assets only
+            // Check if the sale is for pre-ordered items only
             if self.isPreOrdersOnly == true {
 
                 let buyerAccount = buyerCollection.owner ?? panic("Could not get buyer address during accepting the pre sale")
                 let buyerPreOrders = DarkCountryMarket.preOrders[buyerAccount.address] ?? {}
 
-                let preOrderedCount = buyerPreOrders[self.assetTypeID] ?? (0 as UInt64)
+                let preOrderedCount = buyerPreOrders[self.itemTemplateID] ?? (0 as UInt64)
 
                 if preOrderedCount < (1 as UInt64) {
-                    panic("Could not find pre ordered assets")
+                    panic("Could not find pre ordered items")
                 }
 
-                buyerPreOrders[self.assetTypeID] = preOrderedCount - (1 as UInt64)
+                buyerPreOrders[self.itemTemplateID] = preOrderedCount - (1 as UInt64)
 
                 DarkCountryMarket.preOrders[buyerAccount.address] = buyerPreOrders
             }
@@ -226,7 +226,7 @@ pub contract DarkCountryMarket {
             let nft = collectionBorrow.borrowDarkCountryNFT(id: itemID)
                 ?? panic("No such itemID in that collection")
 
-            self.assetTypeID = nft.assetTypeID
+            self.itemTemplateID = nft.itemTemplateID
 
             self.saleCompleted = false
 
@@ -306,7 +306,7 @@ pub contract DarkCountryMarket {
         //
         pub fun insert(offer: @DarkCountryMarket.SaleOffer) {
             let itemID: UInt64 = offer.itemID
-            let assetTypeID: UInt64 = offer.assetTypeID
+            let itemTemplateID: UInt64 = offer.itemTemplateID
             let price: UFix64 = offer.price
 
             // add the new offer to the dictionary which removes the old one
@@ -315,7 +315,7 @@ pub contract DarkCountryMarket {
 
             emit CollectionInsertedSaleOffer(
               itemID: itemID,
-              assetTypeID: assetTypeID,
+              itemTemplateID: itemTemplateID,
               owner: self.owner?.address!,
               price: price
             )
@@ -426,7 +426,7 @@ pub contract DarkCountryMarket {
         // sets pre orders for a user by theirs addresss
         //
         // Parameters: userAddress: The address of the user's account
-        // newPreOrders: dictionaty of asset type and corresponding amount of items that are booked
+        // newPreOrders: dictionaty of Item Template and corresponding amount of items that are booked
         pub fun setPreOrdersForAddress(userAddress: Address, newPreOrders: {UInt64: UInt64}) {
 
             DarkCountryMarket.preOrders[userAddress] = newPreOrders
@@ -461,10 +461,9 @@ pub contract DarkCountryMarket {
     }
 
     init () {
-        //FIXME: REMOVE SUFFIX BEFORE RELEASE
-        self.CollectionStoragePath = /storage/DarkCountryMarketCollection003
-        self.CollectionPublicPath = /public/DarkCountryMarketCollection003
-        self.AdminStoragePath = /storage/DarkCountryAdmin003
+        self.CollectionStoragePath = /storage/DarkCountryMarketCollection
+        self.CollectionPublicPath = /public/DarkCountryMarketCollection
+        self.AdminStoragePath = /storage/DarkCountryAdmin
 
         let admin <- create Admin()
         self.account.save(<-admin, to: self.AdminStoragePath)

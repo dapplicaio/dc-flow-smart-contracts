@@ -10,7 +10,7 @@ import DarkCountry from "0xDarkCountry"
 // It must be run with the account that has the minter resource
 // stored at path /storage/NFTMinter.
 
-transaction(recipient: Address, assetTypeID: UInt64) {
+transaction(recipient: Address, itemTemplateID: UInt64) {
 
     // local variable for storing the minter reference
     let minter: &DarkCountry.NFTMinter
@@ -33,6 +33,6 @@ transaction(recipient: Address, assetTypeID: UInt64) {
             ?? panic("Could not get receiver reference to the NFT Collection")
 
         // mint the NFT and deposit it to the recipient's collection
-        self.minter.mintNFT(recipient: receiver, assetTypeID: assetTypeID)
+        self.minter.mintNFT(recipient: receiver, itemTemplateID: itemTemplateID)
     }
 }

@@ -26,7 +26,7 @@ let DarkCountryContractAddress,
 
     setupDarkCountryAccountTransaction,
     setupDarkCountryMarketAccountTransaction,
-    createAssetTypeTransaction,
+    createItemTemplateTransaction,
     mintNftTransaction,
     buyMarketItemTransaction,
     sellMarketPackTransaction,
@@ -36,7 +36,7 @@ let DarkCountryContractAddress,
     removeMarketItemTransaction,
     sellMarketPackPreOrderedTransaction,
 
-    assetTypeId
+    itemTemplateId
 
 const mintedNftIds = [];
 
@@ -76,12 +76,12 @@ describe("DarkCountryMarket Tests", () => {
         expect(setupDarkCountryMarketAccountTransaction).toBeTruthy();
     });
 
-    test("Get create asset type transaction code", async () => {
-        createAssetTypeTransaction = await getTransactionCodeByName({
-            name: "DarkCountry/create_asset_type"
+    test("Get create item template transaction code", async () => {
+        createItemTemplateTransaction = await getTransactionCodeByName({
+            name: "DarkCountry/create_item_template"
         });
 
-        expect(createAssetTypeTransaction).toBeTruthy();
+        expect(createItemTemplateTransaction).toBeTruthy();
     });
 
     test("Get mintNft transaction code", async () => {
@@ -261,14 +261,14 @@ describe("DarkCountryMarket Tests", () => {
             ]];
 
             const { errorMessage, events } = await sendTransaction({
-                code: createAssetTypeTransaction,
+                code: createItemTemplateTransaction,
                 signers: [DarkCountryContractAddress],
                 args
             });
 
-            assetTypeId = events.find(data => !!data).data.id;
+            itemTemplateId = events.find(data => !!data).data.id;
 
-            expect(assetTypeId).toBeTruthy();
+            expect(itemTemplateId).toBeTruthy();
             expect(errorMessage).toBe("");
         } catch (e) {
             console.log(e);
@@ -276,7 +276,7 @@ describe("DarkCountryMarket Tests", () => {
         }
     });
 
-    test("Shouldn't be able to mint nft with incorrect assetTypeID", async () => {
+    test("Shouldn't be able to mint nft with incorrect ItemTemplateID", async () => {
         try {
             await configureAccount(DARK_COUNTRY);
             await sleep(5000);
@@ -284,7 +284,7 @@ describe("DarkCountryMarket Tests", () => {
             const args = [
                 //recipient
                 [DarkCountryContractAddress, t.Address],
-                //assetTypeID
+                //ItemTemplateID
                 [999, t.UInt64],
             ];
 
@@ -294,7 +294,7 @@ describe("DarkCountryMarket Tests", () => {
                 args
             });
         } catch (e) {
-            expect(e).toContain("Cannot mintNFT: assetType doesn't exist.");
+            expect(e).toContain("Cannot mintNFT: itemTemplate doesn't exist.");
         }
     });
 
@@ -313,8 +313,8 @@ describe("DarkCountryMarket Tests", () => {
                 const args = [
                     //recipient
                     [user, t.Address],
-                    //assetTypeID
-                    [assetTypeId, t.UInt64],
+                    //ItemTemplateID
+                    [itemTemplateId, t.UInt64],
                 ];
 
                 const { errorMessage, events } = await sendTransaction({
@@ -429,7 +429,7 @@ describe("DarkCountryMarket Tests", () => {
                 [Alice, t.Address],
                 //preOrders
                 [
-                    { key: assetTypeId, value: 1 },
+                    { key: itemTemplateId, value: 1 },
                     t.Dictionary({ key: t.UInt64, value: t.UInt64 })
                 ]
             ];
@@ -454,7 +454,7 @@ describe("DarkCountryMarket Tests", () => {
                 [Bob, t.Address],
                 //preOrders
                 [
-                    { key: assetTypeId, value: 1 },
+                    { key: itemTemplateId, value: 1 },
                     t.Dictionary({ key: t.UInt64, value: t.UInt64 })
                 ]
             ];
@@ -540,7 +540,7 @@ describe("DarkCountryMarket Tests", () => {
                 args
             });
         } catch (e) {
-            expect(e).toContain("Could not find pre ordered assets");
+            expect(e).toContain("Could not find pre ordered items");
         }
     });
 
@@ -583,7 +583,7 @@ describe("DarkCountryMarket Tests", () => {
                 args
             });
         } catch (e) {
-            expect(e).toContain("Could not find pre ordered assets");
+            expect(e).toContain("Could not find pre ordered items");
         }
     });
 
