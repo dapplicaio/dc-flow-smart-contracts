@@ -20,5 +20,5 @@ pub fun main(address: Address, itemID: UInt64): {String: String} {
     let nft = collectionBorrow.borrowDarkCountryNFT(id: itemID)
         ?? panic("No such itemID in that collection")
 
-    return DarkCountry.getAssetTypeMetaData(assetTypeID: nft.assetTypeID)!
+    return DarkCountry.getItemTemplateMetaData(itemTemplateID: nft.itemTemplateID)!
 }

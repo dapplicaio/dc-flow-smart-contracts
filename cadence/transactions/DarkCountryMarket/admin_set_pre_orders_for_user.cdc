@@ -13,7 +13,7 @@ import DarkCountryMarket from "0xDarkCountryMarket"
 // Parameters:
 //
 // userAddress: user's Flow Account address
-// preOrders: dictionary of asset type { AssetTypeID, amount }
+// preOrders: dictionary of item type { ItemTemplateID, amount }
 
 transaction(userAddress: Address, preOrders: {UInt64: UInt64}) {
 

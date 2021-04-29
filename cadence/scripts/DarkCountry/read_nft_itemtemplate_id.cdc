@@ -3,9 +3,9 @@
 //emulator
 import DarkCountry from "0xDarkCountry"
 
-// This script gets the AssetType ID associated with an asset
-// in a collection by getting a reference to the asset
-// and then looking up its AssetType ID
+// This script gets the ItemTemplate ID associated with an item
+// in a collection by getting a reference to the item
+// and then looking up its ItemTemplate ID
 
 // Parameters:
 //
@@ -13,7 +13,7 @@ import DarkCountry from "0xDarkCountry"
 // itemID: The unique ID for the moment whose data needs to be read
 
 // Returns: UInt64
-// The AssetType ID associated with an asset with a specified asset ID
+// The ItemTemplate ID associated with an item with a specified item ID
 
 pub fun main(account: Address, itemID: UInt64): UInt64 {
 
@@ -28,5 +28,5 @@ pub fun main(account: Address, itemID: UInt64): UInt64 {
     let nft = collectionBorrow.borrowDarkCountryNFT(id: itemID)
         ?? panic("No such itemID in that collection")
 
-    return nft.assetTypeID
+    return nft.itemTemplateID
 }

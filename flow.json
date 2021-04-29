@@ -9,14 +9,14 @@
 		"DarkCountry": {
 		  "source": "./cadence/contracts/DarkCountry.cdc",
 		  "aliases": {
-			"testnet": "0x93be2a959a25052e",
+			"testnet": "0x52da36f421cf3630",
 			"emulator": "0xf8d6e0586b0a20c7"
 		  }
 		},
 		"DarkCountryMarket": {
 		  "source": "./cadence/contracts/DarkCountryMarket.cdc",
 		  "aliases": {
-			"testnet": "0x93be2a959a25052e",
+			"testnet": "0x52da36f421cf3630",
 			"emulator": "0xf8d6e0586b0a20c7"
 		  }
 		},
@@ -55,13 +55,13 @@
 	"accounts": {
 		"service": {
 			"address": "f8d6e0586b0a20c7",
-			"privateKey": "0366f7a008b9255e8ab747d3cc783e4cbe962693b039f1df5eaf7039f61b1990",
+			"keys": "0366f7a008b9255e8ab747d3cc783e4cbe962693b039f1df5eaf7039f61b1990",
 			"sigAlgorithm": "ECDSA_P256",
 			"hashAlgorithm": "SHA3_256",
 			"keyType": "hex",
 			"keyIndex": 0,
 			"keyContext": {
-			  "privateKey": "0366f7a008b9255e8ab747d3cc783e4cbe962693b039f1df5eaf7039f61b1990"
+			  "keys": "0366f7a008b9255e8ab747d3cc783e4cbe962693b039f1df5eaf7039f61b1990"
 			}
 		},
 		"emulator-account": {
@@ -70,7 +70,7 @@
 			"chain": "flow-emulator"
 		},
 		"testnet-account": {
-			"address": "0x93be2a959a25052e",
+			"address": "0x52da36f421cf3630",
 			"keys": "",
 			"chain": "flow-testnet"
 		  }

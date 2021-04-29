@@ -22,20 +22,20 @@ let DarkCountryContractAddress,
     Alice,
 
     setupAccountTransactionCode,
-    createAssetTypeTransactionCode,
+    createItemTemplateTransactionCode,
     mintNftTransactionCode,
     transferNftTransactionCode,
 
-    readAllAssetTypesScriptCode,
+    readAllItemTemplatesScriptCode,
     readAssetMetadataFieldValueScriptCode,
     readCollectionIdsScriptCode,
     readCollectionLengthScriptCode,
-    readNextAssetTypeIdScriptCode,
-    readNftAssetTypeIdScriptCode,
+    readNextItemTemplateIdScriptCode,
+    readNftItemTemplateIdScriptCode,
     readNftMetadataScriptCode,
     readNftSupplyCode,
 
-    assetTypeId,
+    itemTemplateId,
     mintedNftId
 
 beforeAll(() => {
@@ -60,12 +60,12 @@ describe("DarkCountry Tests", () => {
         expect(setupAccountTransactionCode).toBeTruthy();
     });
 
-    test("Get create asset type transaction code", async () => {
-        createAssetTypeTransactionCode = await getTransactionCodeByName({
-            name: "DarkCountry/create_asset_type"
+    test("Get create item template transaction code", async () => {
+        createItemTemplateTransactionCode = await getTransactionCodeByName({
+            name: "DarkCountry/create_item_template"
         });
 
-        expect(createAssetTypeTransactionCode).toBeTruthy();
+        expect(createItemTemplateTransactionCode).toBeTruthy();
     });
 
     test("Get mint nft transaction code", async () => {
@@ -84,17 +84,17 @@ describe("DarkCountry Tests", () => {
         expect(transferNftTransactionCode).toBeTruthy();
     });
 
-    test("Get readAllAssetTypes script code", async () => {
-        readAllAssetTypesScriptCode = await getScriptCodeByName({
-            name: "DarkCountry/read_all_asset_types"
+    test("Get readAllItemTemplates script code", async () => {
+        readAllItemTemplatesScriptCode = await getScriptCodeByName({
+            name: "DarkCountry/read_all_item_templates"
         });
 
-        expect(readAllAssetTypesScriptCode).toBeTruthy();
+        expect(readAllItemTemplatesScriptCode).toBeTruthy();
     });
 
     test("Get readAssetMetadataFieldValue script code", async () => {
         readAssetMetadataFieldValueScriptCode = await getScriptCodeByName({
-            name: "DarkCountry/read_asset_metadata_field_value"
+            name: "DarkCountry/read_item_metadata_field_value"
         });
 
         expect(readAssetMetadataFieldValueScriptCode).toBeTruthy();
@@ -116,20 +116,20 @@ describe("DarkCountry Tests", () => {
         expect(readCollectionLengthScriptCode).toBeTruthy();
     });
 
-    test("Get readNextAssetTypeId script code", async () => {
-        readNextAssetTypeIdScriptCode = await getScriptCodeByName({
-            name: "DarkCountry/read_nextAssetTypeID"
+    test("Get readNextItemTemplateId script code", async () => {
+        readNextItemTemplateIdScriptCode = await getScriptCodeByName({
+            name: "DarkCountry/read_nextItemTemplateID"
         });
 
-        expect(readNextAssetTypeIdScriptCode).toBeTruthy();
+        expect(readNextItemTemplateIdScriptCode).toBeTruthy();
     });
 
-    test("Get readNftAssetTypeId script code", async () => {
-        readNftAssetTypeIdScriptCode = await getScriptCodeByName({
-            name: "DarkCountry/read_nft_assettype_id"
+    test("Get readNftItemTemplateId script code", async () => {
+        readNftItemTemplateIdScriptCode = await getScriptCodeByName({
+            name: "DarkCountry/read_nft_itemtemplate_id"
         });
 
-        expect(readNftAssetTypeIdScriptCode).toBeTruthy();
+        expect(readNftItemTemplateIdScriptCode).toBeTruthy();
     });
 
     test("Get readNftMetadata script code", async () => {
@@ -182,7 +182,7 @@ describe("DarkCountry Tests", () => {
         }
     });
 
-    test("Should be able to create asset type", async () => {
+    test("Should be able to create item template", async () => {
         try {
             await configureAccount(DARK_COUNTRY);
             await sleep(5000);
@@ -199,14 +199,14 @@ describe("DarkCountry Tests", () => {
             ]];
 
             const { errorMessage, events } = await sendTransaction({
-                code: createAssetTypeTransactionCode,
+                code: createItemTemplateTransactionCode,
                 signers: [DarkCountryContractAddress],
                 args
             });
 
-            assetTypeId = events.find(data => !!data).data.id;
+            itemTemplateId = events.find(data => !!data).data.id;
 
-            expect(assetTypeId).toBeTruthy();
+            expect(itemTemplateId).toBeTruthy();
             expect(errorMessage).toBe("");
         } catch (e) {
             console.log(e);
@@ -214,7 +214,7 @@ describe("DarkCountry Tests", () => {
         }
     });
 
-    test("Shouldn't be able to mint nft with incorrect assetTypeID", async () => {
+    test("Shouldn't be able to mint nft with incorrect ItemTemplateID", async () => {
         try {
             await configureAccount(DARK_COUNTRY);
             await sleep(5000);
@@ -222,7 +222,7 @@ describe("DarkCountry Tests", () => {
             const args = [
                 //recipient
                 [DarkCountryContractAddress, t.Address],
-                //assetTypeID
+                //ItemTemplateID
                 [999, t.UInt64],
             ];
 
@@ -232,7 +232,7 @@ describe("DarkCountry Tests", () => {
                 args
             });
         } catch (e) {
-            expect(e).toContain("Cannot mintNFT: assetType doesn't exist.");
+            expect(e).toContain("Cannot mintNFT: itemTemplate doesn't exist.");
         }
     });
 
@@ -244,8 +244,8 @@ describe("DarkCountry Tests", () => {
             const args = [
                 //recipient
                 [DarkCountryContractAddress, t.Address],
-                //assetTypeID
-                [assetTypeId, t.UInt64],
+                //ItemTemplateID
+                [itemTemplateId, t.UInt64],
             ];
 
             const { errorMessage, events } = await sendTransaction({
@@ -314,7 +314,7 @@ describe("DarkCountry Tests", () => {
     test("Read all asset types", async () => {
         try {
             const scriptResult = await executeScript({
-                code: readAllAssetTypesScriptCode
+                code: readAllItemTemplatesScriptCode
             });
 
             expect(scriptResult).not.toBeNull();
@@ -392,7 +392,7 @@ describe("DarkCountry Tests", () => {
     test("Read next asset type id", async () => {
         try {
             const scriptResult = await executeScript({
-                code: readNextAssetTypeIdScriptCode
+                code: readNextItemTemplateIdScriptCode
             });
 
             expect(scriptResult).not.toBeNull();
@@ -413,7 +413,7 @@ describe("DarkCountry Tests", () => {
             ];
 
             const scriptResult = await executeScript({
-                code: readNftAssetTypeIdScriptCode,
+                code: readNftItemTemplateIdScriptCode,
                 args
             });
 

@@ -5,20 +5,20 @@
 import NonFungibleToken from "0xNonFungibleToken"
 import DarkCountry from "0xDarkCountry"
 
-// This script returns the full metadata associated with an asset type
+// This script returns the full metadata associated with an item template
 // in the DarkCountry smart contract
 
 // Parameters:
 //
-// assetTypeID: The unique ID for the asset type whose data needs to be read
+// itemTemplateID: The unique ID for the item template whose data needs to be read
 
 // Returns: {String:String}
 // A dictionary of all the play metadata associated
-// with the specified assetTypeID
+// with the specified itemTemplateID
 
-pub fun main(assetTypeID: UInt32): {String:String} {
+pub fun main(itemTemplateID: UInt32): {String:String} {
 
-    let metadata = DarkCountry.getAssetTypeMetaData(assetTypeID: assetTypeID) ?? panic("AssetType doesn't exist")
+    let metadata = DarkCountry.getItemTemplateMetaData(itemTemplateID: itemTemplateID) ?? panic("ItemTemplate doesn't exist")
 
     log(metadata)
 

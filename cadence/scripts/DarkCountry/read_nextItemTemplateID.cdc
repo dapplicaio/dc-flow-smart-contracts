@@ -5,15 +5,15 @@
 import NonFungibleToken from "0xNonFungibleToken"
 import DarkCountry from "0xDarkCountry"
 
-// This script reads the public nextSAssetTypeID from the DarkCountry contract and
+// This script reads the public nextItemTemplateID from the DarkCountry contract and
 // returns that number to the caller
 
 // Returns: UInt64
-// the nextAssetTypeID field in DarkCountry contract
+// the nextItemTemplateID field in DarkCountry contract
 
 pub fun main(): UInt64 {
 
-    log(DarkCountry.nextAssetTypeID)
+    log(DarkCountry.nextItemTemplateID)
 
-    return DarkCountry.nextAssetTypeID
+    return DarkCountry.nextItemTemplateID
 }
