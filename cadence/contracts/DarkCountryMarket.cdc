@@ -42,16 +42,16 @@
 
 */
 
-//import FlowToken from "./FlowToken.cdc"
-//import DarkCountry from "./DarkCountry.cdc"
-//import FungibleToken from "/FungibleToken.cdc"
-//import NonFungibleToken from "./NonFungibleToken.cdc"
+import FlowToken from "./FlowToken.cdc"
+import DarkCountry from "./DarkCountry.cdc"
+import FungibleToken from "/FungibleToken.cdc"
+import NonFungibleToken from "./NonFungibleToken.cdc"
 
 // for tests only
-import FlowToken from FlowToken
-import DarkCountry from DarkCountry
-import FungibleToken from FungibleToken
-import NonFungibleToken from NonFungibleToken
+//import FlowToken from FlowToken
+//import DarkCountry from DarkCountry
+//import FungibleToken from FungibleToken
+//import NonFungibleToken from NonFungibleToken
 
 pub contract DarkCountryMarket {
     // SaleOffer events.
@@ -59,7 +59,7 @@ pub contract DarkCountryMarket {
     // A sale offer has been created.
     pub event SaleOfferCreated(itemID: UInt64, price: UFix64)
     // Someone has purchased an item that was offered for sale.
-    pub event SaleOfferAccepted(itemID: UInt64)
+    pub event SaleOfferAccepted(itemID: UInt64, buyerAddress: Address)
     // A sale offer has been destroyed, with or without being accepted.
     pub event SaleOfferFinished(itemID: UInt64)
 
@@ -158,10 +158,11 @@ pub contract DarkCountryMarket {
                 self.saleCompleted == false: "the sale offer has already been accepted"
             }
 
+            let buyerAccount = buyerCollection.owner ?? panic("Could not get buyer address during accepting the pre sale")
+
             // Check if the sale is for pre-ordered items only
             if self.isPreOrdersOnly == true {
 
-                let buyerAccount = buyerCollection.owner ?? panic("Could not get buyer address during accepting the pre sale")
                 let buyerPreOrders = DarkCountryMarket.preOrders[buyerAccount.address] ?? {}
 
                 let preOrderedCount = buyerPreOrders[self.itemTemplateID] ?? (0 as UInt64)
@@ -190,7 +191,7 @@ pub contract DarkCountryMarket {
             let nft <- self.sellerItemProvider.borrow()!.withdraw(withdrawID: self.itemID)
             buyerCollection.deposit(token: <-nft)
 
-            emit SaleOfferAccepted(itemID: self.itemID)
+            emit SaleOfferAccepted(itemID: self.itemID, buyerAddress: buyerAccount.address)
         }
 
         // destructor
@@ -245,7 +246,9 @@ pub contract DarkCountryMarket {
     // createSaleOffer
     // Make creating a SaleOffer publicly accessible.
     //
-    pub fun createSaleOffer (
+    // NOTE: the function will be private in the initial release of the market smart contract
+    // 
+    access(self) fun createSaleOffer (
         sellerItemProvider: Capability<&DarkCountry.Collection{NonFungibleToken.Provider}>,
         itemID: UInt64,
         sellerPaymentReceiver: Capability<&FlowToken.Vault{FungibleToken.Receiver}>,
@@ -450,8 +453,8 @@ pub contract DarkCountryMarket {
                 sellerPaymentReceiver: sellerPaymentReceiver,
                 price: price,
                 isPreOrdersOnly: true
-        )
-    }
+            )
+        }
 
         // createNewAdmin creates a new Admin resource
         //
