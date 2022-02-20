@@ -90,6 +90,20 @@ pub contract DarkCountry: NonFungibleToken {
     // NFTs of a certain type
     pub var numberMintedPerItemTemplate: {UInt64: UInt64}
 
+    // NFT STAKING
+
+    // Staked Items.
+    // Indicates list of NFTs staked by a user.
+    pub var stakedItems: { Address: [UInt64] }
+
+    // Emitted when NFTs are staked
+    pub event ItemsStaked(from: Address, ids: [UInt64])
+
+    // Emitted when NFTs are unstaked
+    pub event ItemsUnstaked(from: Address, ids: [UInt64])
+
+    // END NFT STAKING
+
     // Variable size dictionary of ItemTemplate structs
     access(self) var itemTemplates: {UInt64: ItemTemplate}
 
@@ -322,7 +336,6 @@ pub contract DarkCountry: NonFungibleToken {
             DarkCountry.numberMintedPerItemTemplate[itemTemplateID] = numOfItemTemplateNFTs + (1 as UInt64)
 		}
 
-
         // createItemTemplate creates a new ItemTemplate struct
         // and stores it in the itemTemplates dictionary in the DarkCountry smart contract
         //
@@ -340,6 +353,18 @@ pub contract DarkCountry: NonFungibleToken {
             DarkCountry.itemTemplates[newID] = newItemTemplate
 
             return newID
+        }
+
+        // sets staked NFTs for a user by theirs addresss
+        //
+        // Parameters: userAddress: The address of the user's account
+        // newStakedItems: new list of items
+        // 
+        // To be used to unstaked the NFTs for user 
+        // only Admin/Minter can do that
+        pub fun setStakedNFTsForAddress(userAddress: Address, stakedNFTs: [UInt64]) {
+
+            DarkCountry.stakedItems[userAddress] = stakedNFTs
         }
 
         // createNewNFTMinter creates a new NFTMinter resource
@@ -378,6 +403,8 @@ pub contract DarkCountry: NonFungibleToken {
         self.nextItemTemplateID = 1
         self.numberMintedPerItemTemplate = {}
         self.itemTemplates = {}
+        self.stakedItems = {}
+
 
         // Create a Minter resource and save it to storage
         let minter <- create NFTMinter()
