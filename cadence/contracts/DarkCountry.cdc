@@ -42,6 +42,7 @@
 */
 
 import NonFungibleToken from "./NonFungibleToken.cdc"
+import DarkCountryStaking from "./DarkCountryStaking.cdc"
 
 // for tests only
 //import NonFungibleToken from NonFungibleToken
@@ -218,6 +219,12 @@ pub contract DarkCountry: NonFungibleToken {
         // Removes an NFT from the collection and moves it to the caller
         //
         pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
+            // make sure the NFT is not staked
+            if  DarkCountryStaking.stakedItems.containsKey(self.owner?.address!) &&
+                DarkCountryStaking.stakedItems[self.owner?.address!]!.contains(withdrawID) {
+                panic("Cannot withdraw: the NFT is staked.")
+            }
+
             let token <- self.ownedNFTs.remove(key: withdrawID) ?? panic("missing NFT")
 
             emit Withdraw(id: token.id, from: self.owner?.address)
@@ -321,7 +328,6 @@ pub contract DarkCountry: NonFungibleToken {
 
             DarkCountry.numberMintedPerItemTemplate[itemTemplateID] = numOfItemTemplateNFTs + (1 as UInt64)
 		}
-
 
         // createItemTemplate creates a new ItemTemplate struct
         // and stores it in the itemTemplates dictionary in the DarkCountry smart contract

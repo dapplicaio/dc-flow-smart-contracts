@@ -44,6 +44,7 @@
 
 import FlowToken from "./FlowToken.cdc"
 import DarkCountry from "./DarkCountry.cdc"
+import DarkCountryStaking from "./DarkCountryStaking.cdc"
 import FungibleToken from "/FungibleToken.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
 
@@ -226,6 +227,12 @@ pub contract DarkCountryMarket {
             // borrow a reference to a specific NFT in the collection
             let nft = collectionBorrow.borrowDarkCountryNFT(id: itemID)
                 ?? panic("No such itemID in that collection")
+            
+            // make sure the NFT is not staked
+            if  DarkCountryStaking.stakedItems.containsKey(nft.owner?.address!) &&
+                DarkCountryStaking.stakedItems[nft.owner?.address!]!.contains(itemID) {
+                panic("Cannot withdraw: the NFT is staked.")
+            }
 
             self.itemTemplateID = nft.itemTemplateID
 
