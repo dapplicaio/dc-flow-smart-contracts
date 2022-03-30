@@ -1,7 +1,7 @@
 //import FungibleToken from "./FungibleToken.cdc"
 
 // for tests only
-import FungibleToken from FungibleToken
+import FungibleToken from "./FungibleToken"
 
 pub contract FlowToken: FungibleToken {
 
