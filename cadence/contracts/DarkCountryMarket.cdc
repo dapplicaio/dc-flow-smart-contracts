@@ -106,7 +106,7 @@ pub contract DarkCountryMarket {
     // The Admin resource manages the data.
     // Note: We do not make it as a resource that can be stored in user's storage
     // since the pre-order might be requested off chain
-    pub var preOrders: { Address: { UInt64 : UInt64 } }
+    access(account) var preOrders: { Address: { UInt64 : UInt64 } }
 
     // SaleOfferPublicView
     // An interface providing a read-only view of a SaleOffer

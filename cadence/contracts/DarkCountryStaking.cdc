@@ -4,7 +4,7 @@ pub contract DarkCountryStaking {
 
     // Staked Items.
     // Indicates list of NFTs staked by a user.
-    pub var stakedItems: { Address: [UInt64] }
+    access(account) var stakedItems: { Address: [UInt64] }
 
     // Emitted when NFTs are staked
     pub event ItemsStaked(from: Address, ids: [UInt64])

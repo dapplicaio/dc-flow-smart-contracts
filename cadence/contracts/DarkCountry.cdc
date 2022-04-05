@@ -89,7 +89,7 @@ pub contract DarkCountry: NonFungibleToken {
     //
     // In other words it can be considered as totalSupply of
     // NFTs of a certain type
-    pub var numberMintedPerItemTemplate: {UInt64: UInt64}
+    access(account) var numberMintedPerItemTemplate: {UInt64: UInt64}
 
     // Variable size dictionary of ItemTemplate structs
     access(self) var itemTemplates: {UInt64: ItemTemplate}
