@@ -4,7 +4,7 @@ pub contract DarkCountryStaking {
 
     // Staked Items.
     // Indicates list of NFTs staked by a user.
-    pub var stakedItems: { Address: [UInt64] }
+    access(account) var stakedItems: { Address: [UInt64] }
 
     // Emitted when NFTs are staked
     pub event ItemsStaked(from: Address, ids: [UInt64])
@@ -14,6 +14,11 @@ pub contract DarkCountryStaking {
     pub event ItemsRequestedForUnstaking(from: Address, ids: [UInt64])
 
     pub let AdminStoragePath: StoragePath
+
+    pub fun getStakedNFTsForAddress(userAddress: Address): [UInt64] {
+
+        return self.stakedItems[userAddress]
+    }
 
     pub fun requestSetStakedNFTsForAddress(userAddress: Address, stakedNFTs: [UInt64]) {
 
