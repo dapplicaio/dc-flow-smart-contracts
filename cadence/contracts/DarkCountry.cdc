@@ -41,11 +41,10 @@
     and those cases need to be handled by the caller.
 */
 
-import NonFungibleToken from "./NonFungibleToken.cdc"
-import DarkCountryStaking from "./DarkCountryStaking.cdc"
 
-// for tests only
-//import NonFungibleToken from NonFungibleToken
+import NonFungibleToken from 0x1d7e57aa55817448
+import DarkCountryStaking from 0xc8c340cebd11f690
+
 
 pub contract DarkCountry: NonFungibleToken {
 

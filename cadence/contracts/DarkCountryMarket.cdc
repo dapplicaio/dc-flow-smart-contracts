@@ -42,17 +42,12 @@
 
 */
 
-import FlowToken from "./FlowToken.cdc"
-import DarkCountry from "./DarkCountry.cdc"
-import DarkCountryStaking from "./DarkCountryStaking.cdc"
-import FungibleToken from "/FungibleToken.cdc"
-import NonFungibleToken from "./NonFungibleToken.cdc"
+import FlowToken from 0x1654653399040a61
+import DarkCountry from 0xc8c340cebd11f690
+import DarkCountryStaking from 0xc8c340cebd11f690
+import FungibleToken from 0xf233dcee88fe0abe
+import NonFungibleToken from 0x1d7e57aa55817448
 
-// for tests only
-//import FlowToken from FlowToken
-//import DarkCountry from DarkCountry
-//import FungibleToken from FungibleToken
-//import NonFungibleToken from NonFungibleToken
 
 pub contract DarkCountryMarket {
     // SaleOffer events.
